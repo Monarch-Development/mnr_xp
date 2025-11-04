@@ -37,6 +37,7 @@ AddEventHandler('playerDropped', function()
     end
 
     players[src]:save()
+    players[src] = nil
 end)
 
 -- Event triggered when a scheduled restart of the server is near
