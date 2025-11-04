@@ -1,5 +1,5 @@
 ## MONARCH XP [WIP]
-A new resource useful for xp management of players
+A new resource useful for xp management
 
 ## Features
 - Auto-creation of database tables
