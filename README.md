@@ -1,4 +1,4 @@
-## MONARCH XP [WIP]
+## MONARCH XP [WORK IN PROGRESS]
 A new resource useful for xp management
 
 ## Features
