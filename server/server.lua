@@ -29,9 +29,7 @@ AddEventHandler('mnr_xp:server:InitPlayerXp', function(source)
     end
 end)
 
--- Event triggered during player logout to save all the data
----@param source number | string
-AddEventHandler('mnr_xp:server:SavePlayerXp', function(source)
+AddEventHandler('playerDropped', function()
     local src = source
 
     if not registryCheck(src) then
