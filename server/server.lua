@@ -36,9 +36,7 @@ AddEventHandler('playerDropped', function()
         return
     end
 
-    for name, data in pairs(players[src].data) do
-        database.SavePlayerData(players[src].identifier, name, data)
-    end
+    players[src]:save()
 end)
 
 -- Event triggered when a scheduled restart of the server is near
