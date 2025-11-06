@@ -1,10 +1,25 @@
-local categories = require 'config.categories'
+---@description Dependency ensuring
+assert(GetResourceState('ox_lib') == 'started', 'ox_lib not found or not started before this script, install or start before ox_lib')
+
+---@description Name/Update Checker
+---@diagnostic disable-next-line: missing-parameter
+local correctName = GetResourceMetadata(GetCurrentResourceName(), 'name')
+
+AddEventHandler('onResourceStart', function(name)
+    if GetCurrentResourceName() ~= name then return end
+
+    assert(GetCurrentResourceName() == correctName, ('The resource name is incorrect. Please set it to %s.^0'):format(correctName))
+end)
+
+lib.versionCheck(('Monarch-Development/%s'):format(correctName))
+
+local config = require 'config.server'
 local class = require 'server.modules.player'
 
 local players = {}
 
 -- Helper function to check memory to validate params
----@param src number | string Id of the player
+---@param src number Id of the player
 ---@param name? string Name of the category
 local function registryCheck(src, name)
 
@@ -12,7 +27,7 @@ local function registryCheck(src, name)
         return false
     end
 
-    if name and not categories[name] then
+    if name and not config[name] then
         return false
     end
 
@@ -20,7 +35,7 @@ local function registryCheck(src, name)
 end
 
 -- Event triggered after player character login to initialize his class
----@param source number | string
+---@param source number
 AddEventHandler('mnr_xp:server:InitPlayerXp', function(source)
     local src = source
 
@@ -50,20 +65,8 @@ AddEventHandler('txAdmin:events:scheduledRestart', function(data)
     end
 end)
 
--- Callback for internal use and return client side all the stats of a player (Menu view)
----@param source number | string
-lib.callback.register('mnr_xp:server:GetStats', function(source)
-    local src = source
-
-    if not registryCheck(src) then
-        return
-    end
-
-    return players[src]:getAll()
-end)
-
 -- Event triggered to add XP to a player
----@param source number | string
+---@param source number
 ---@param name string
 ---@param amount number
 AddEventHandler('mnr_xp:server:AddXp', function(source, name, amount)
@@ -77,7 +80,7 @@ AddEventHandler('mnr_xp:server:AddXp', function(source, name, amount)
 end)
 
 -- Function with its relative export to get XP of a player
----@param source number | string
+---@param source number
 ---@param name string
 ---@return number | boolean
 local function GetXp(source, name)
@@ -93,7 +96,7 @@ end
 exports('GetXp', GetXp)
 
 -- Function with its relative export to get the level of a player
----@param source number | string
+---@param source number
 ---@param name string
 ---@return number | boolean
 local function GetLevel(source, name)
@@ -107,3 +110,18 @@ local function GetLevel(source, name)
 end
 
 exports('GetLevel', GetLevel)
+
+-- Command for menu view of levels and xp
+lib.addCommand('xp', {
+    help = locale('command_help'),
+}, function(source)
+    local src = source
+
+    if not registryCheck(src) then
+        return
+    end
+
+    local data = players[src]:getAll()
+
+    TriggerClientEvent('mnr_xp:client:OpenXpMenu', src, data)
+end)

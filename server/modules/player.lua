@@ -1,4 +1,4 @@
-local categories = require 'config.categories'
+local config = require 'config.server'
 local database = require 'server.modules.database'
 
 ---@class player
@@ -18,12 +18,12 @@ function player.new(playerId)
 
     self.data = {}
 
-    for name in pairs(categories) do
+    for name in pairs(config) do
         local playerXp = database.RetrievePlayerData(self.identifier, name)
         if playerXp then
-            self.data[name] = { xp = playerXp.xp, level = playerXp.level }
+            self.data[name] = { xp = playerXp.xp, level = playerXp.level, max = config[name].baseXp * playerXp.level }
         else
-            self.data[name] = { xp = 0, level = 1 }
+            self.data[name] = { xp = 0, level = 1, max = config[name].baseXp }
         end
     end
 
@@ -36,7 +36,7 @@ end
 function player:requiredXp(name)
     local level = self.data[name] and self.data[name].level
 
-    return categories[name].baseXp * level
+    return config[name].baseXp * level
 end
 
 -- Calculates the new level and remaining XP based on the player's current XP
@@ -73,6 +73,7 @@ function player:addXp(name, amount)
 
     TriggerEvent('mnr:server:XpEarned', self.source, self.identifier, name, entry.xp, amount)
     if newLevel > oldLevel then
+        entry.max = config[name].baseXp * newLevel
         TriggerEvent('mnr:server:LevelUp', self.source, self.identifier, name, oldLevel, newLevel)
     end
 

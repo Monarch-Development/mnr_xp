@@ -1,9 +1,9 @@
-local categories = require 'config.categories'
+local config = require 'config.server'
 
 local database = {}
 
 function database.RetrievePlayerData(identifier, name)
-    local tableName = categories[name] and categories[name].database
+    local tableName = config[name] and config[name].database
     if not tableName then
         print(('^3[DATABASE] Category "%s" does not have a defined table^0'):format(name))
         return false
@@ -22,7 +22,7 @@ function database.RetrievePlayerData(identifier, name)
 end
 
 function database.SavePlayerData(identifier, name, data)
-    local tableName = categories[name] and categories[name].database
+    local tableName = config[name] and config[name].database
     if not tableName then
         print(('^3[DATABASE] Category "%s" does not have a defined table^0'):format(identifier, name))
 

@@ -1,0 +1,6 @@
+{
+    "command_help": "Shows the menu with levels and xp",
+    "menu_title": "XP Menu",
+    "option_unknown": "Unknown",
+    "option_description": "LVL: %d | XP: %d"
+}
